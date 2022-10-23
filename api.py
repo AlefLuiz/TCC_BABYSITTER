@@ -1,7 +1,7 @@
 import secrets
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from ia_predict_var import ia_predict_var
+from ia_predict import ia_predict
 from pydantic import BaseModel
 
 USERNAME = b"tcc_teste"
@@ -17,7 +17,7 @@ class Audio_Payload(BaseModel):
 
 security = HTTPBasic()
 
-mic_looping_api = ia_predict_var()
+ia_api = ia_predict()
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     current_username_bytes = credentials.username.encode("utf8")
@@ -40,5 +40,5 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 
 @app.post("/classificar")
 def classificar_audio(payload: Audio_Payload, credentials: HTTPBasicCredentials = Depends(security)):
-    mic_looping_api.transform_b64(payload.audio_b64)
-    return mic_looping_api.predict()
+    ia_api.transform_b64(payload.audio_b64)
+    return ia_api.predict()

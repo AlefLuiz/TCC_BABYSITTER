@@ -5,7 +5,7 @@ import warnings
 import base64
 warnings.filterwarnings('ignore')
 
-class ia_predict_var:
+class ia_predict:
     def __init__(self) -> None:
         self.IA_DICT = ['baby', 'ruido']
         self.MODEL_FINAL = load_model('models\model_tratados.h5')
