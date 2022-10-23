@@ -6,4 +6,4 @@ requests
 SpeechRecognition
 keras
 pydantic
-tensorflow
+tensorflow-cpu
