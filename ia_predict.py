@@ -3,12 +3,14 @@ import librosa
 from keras.models import load_model
 import warnings
 import base64
+import os
 warnings.filterwarnings('ignore')
 
 class ia_predict:
     def __init__(self) -> None:
         self.IA_DICT = ['baby', 'ruido']
-        self.MODEL_FINAL = load_model('models\model_tratados.h5')
+        path = os.path.abspath(__file__)
+        self.MODEL_FINAL = load_model(f'{path}models\model_tratados.h5')
         self.TEST_FILENAME = 'teste.wav'
 
     #EXTRAI O AUDIO EM MATRIZ
