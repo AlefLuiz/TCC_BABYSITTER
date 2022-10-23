@@ -1,17 +1,16 @@
 import telebot
 import threading
-from mic_looping import mic_looping
+from mic_record import MicRecord
 
 bot = telebot.TeleBot("1576597570:AAEWf3F0UmEw4M5b3vL6uxC2Z-66X3c9wCs", parse_mode=None)
 
 monitorar = False
-mic_loop = mic_looping()
+mic_record = MicRecord()
 threads = []
 
 def run(message, bot: telebot.TeleBot):
     while monitorar:
-        mic_loop.ouvir_microfone()
-        predict_dict = mic_loop.predict(mic_loop.TEST_FILENAME, mic_loop.IA_DICT)
+        predict_dict = mic_record.chamar_api()
         if predict_dict["baby"] > 80:
             bot.reply_to(message, "Seu bebê está chorando!")
 

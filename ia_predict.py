@@ -1,14 +1,11 @@
 import numpy as np
-import os
 import librosa
-from IPython.display import Audio
 from keras.models import load_model
 import warnings
-import speech_recognition as sr
 import base64
 warnings.filterwarnings('ignore')
 
-class mic_looping:
+class ia_predict_var:
     def __init__(self) -> None:
         self.IA_DICT = ['baby', 'ruido']
         self.MODEL_FINAL = load_model('models\model_tratados.h5')
@@ -41,18 +38,6 @@ class mic_looping:
                 emocao_final = emocao
                 probabilidade_final = probabilidade
         return {emocao_final : round(probabilidade_final * 100, 2)}
-
-    #OUVE O MICROFONE
-    def ouvir_microfone(self):
-        #Habilita o microfone para ouvir o usuario
-        microfone = sr.Recognizer()
-        with sr.Microphone() as source:
-            microfone.adjust_for_ambient_noise(source)
-            audio = microfone.listen(source, phrase_time_limit=3)
-            f = open(self.TEST_FILENAME, "wb")
-            f.write(audio.get_wav_data())
-            f.close()
-        return audio
 
     def transform_b64(self, audio_b64):
         file_content = base64.b64decode(audio_b64)

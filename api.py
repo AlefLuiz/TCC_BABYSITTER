@@ -1,7 +1,7 @@
 import secrets
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from mic_looping import mic_looping
+from ia_predict_var import ia_predict_var
 from pydantic import BaseModel
 
 USERNAME = b"tcc_teste"
@@ -17,7 +17,7 @@ class Audio_Payload(BaseModel):
 
 security = HTTPBasic()
 
-mic_looping_api = mic_looping()
+mic_looping_api = ia_predict_var()
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     current_username_bytes = credentials.username.encode("utf8")
