@@ -10,7 +10,7 @@ class ia_predict:
     def __init__(self) -> None:
         self.IA_DICT = ['baby', 'ruido']
         path = os.path.abspath(__file__)
-        self.MODEL_FINAL = load_model(f'{path}/models/model_tratados.h5')
+        self.MODEL_FINAL = load_model(f'{path}/model_tratados.h5')
         self.TEST_FILENAME = 'teste.wav'
 
     #EXTRAI O AUDIO EM MATRIZ
