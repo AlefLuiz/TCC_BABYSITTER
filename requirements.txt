@@ -26,8 +26,6 @@ ptyprocess==0.7.0
 pycosat==0.6.3
 pylev==1.4.0
 pyparsing==3.0.9
-pywin32==302
-pywin32-ctypes==0.2.0
 requests
 requests-toolbelt==0.9.1
 shellingham==1.5.0
