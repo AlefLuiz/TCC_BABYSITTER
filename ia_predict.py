@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 class ia_predict:
     def __init__(self) -> None:
         self.IA_DICT = ['baby', 'ruido']
-        path = os.path.abspath(__file__)
+        path = os.path.abspath(os.getcwd())
         self.MODEL_FINAL = load_model(f'{path}/model_tratados.h5')
         self.TEST_FILENAME = 'teste.wav'
 
