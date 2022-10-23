@@ -1,37 +1,44 @@
-import telebot
-import threading
+import secrets
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from mic_looping import mic_looping
+from pydantic import BaseModel
 
-bot = telebot.TeleBot("1576597570:AAEWf3F0UmEw4M5b3vL6uxC2Z-66X3c9wCs", parse_mode=None)
+USERNAME = b"tcc_teste"
+PASSWORD = b"tcc_vai_dar_certo"
 
-monitorar = False
-mic_loop = mic_looping()
-threads = []
+app = FastAPI(
+    title="TCC BABYSITTER API",
+    docs_url="/"
+    )
 
-def run(message, bot: telebot.TeleBot):
-    while monitorar:
-        mic_loop.ouvir_microfone()
-        predict_dict = mic_loop.predict(mic_loop.TEST_FILENAME, mic_loop.IA_DICT)
-        if predict_dict["baby"] > 80:
-            bot.reply_to(message, "Seu bebê está chorando!")
+class Audio_Payload(BaseModel):
+    audio_b64: str
 
-@bot.message_handler(commands=['iniciar_monitoramento'])
-def send_welcome(message):
-    global monitorar
+security = HTTPBasic()
 
-    bot.reply_to(message, "Estou de prontidão para te avisar qualquer choro!")
-    thread = threading.Thread(target=run, args=(message, bot))
-    thread.start()
-    monitorar = True
-    threads.append(thread)
+mic_looping_api = mic_looping()
 
-@bot.message_handler(commands=['desligar_monitoramento'])
-def send_bye(message):
-    global monitorar
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    current_username_bytes = credentials.username.encode("utf8")
+    correct_username_bytes = USERNAME
+    is_correct_username = secrets.compare_digest(
+        current_username_bytes, correct_username_bytes
+    )
+    current_password_bytes = credentials.password.encode("utf8")
+    correct_password_bytes = PASSWORD
+    is_correct_password = secrets.compare_digest(
+        current_password_bytes, correct_password_bytes
+    )
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 
-    bot.reply_to(message, "Parando IA!")
-    monitorar = False
-    for thread in threads:
-        thread.join()
-
-bot.infinity_polling()
+@app.post("/classificar")
+def classificar_audio(payload: Audio_Payload, credentials: HTTPBasicCredentials = Depends(security)):
+    mic_looping_api.transform_b64(payload.audio_b64)
+    return mic_looping_api.predict()

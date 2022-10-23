@@ -5,6 +5,7 @@ from IPython.display import Audio
 from keras.models import load_model
 import warnings
 import speech_recognition as sr
+import base64
 warnings.filterwarnings('ignore')
 
 class mic_looping:
@@ -14,19 +15,19 @@ class mic_looping:
         self.TEST_FILENAME = 'teste.wav'
 
     #EXTRAI O AUDIO EM MATRIZ
-    def extract_mfcc(self, filename):
-        y, sr = librosa.load(filename, duration=3, offset=0.5)
+    def extract_mfcc(self):
+        y, sr = librosa.load(self.TEST_FILENAME, duration=3, offset=0.5)
         mfcc = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)
         return mfcc
 
     #USA O MODELO DE IA PRA CATEGORIZAR
-    def predict(self, filename, emotions):
-        audio_extract = [self.extract_mfcc(filename)]
+    def predict(self):
+        audio_extract = [self.extract_mfcc()]
         audio_extract = np.array(audio_extract)
         audio_extract = np.expand_dims(audio_extract, -1)
         result_ia = self.MODEL_FINAL.predict(audio_extract)[0]
         result_dict = {}
-        for index, emotion in enumerate(emotions):
+        for index, emotion in enumerate(self.IA_DICT):
             result_dict[emotion] = round(result_ia[index] * 100, 2)
         print(result_dict)
         return result_dict
@@ -52,4 +53,9 @@ class mic_looping:
             f.write(audio.get_wav_data())
             f.close()
         return audio
-    
+
+    def transform_b64(self, audio_b64):
+        file_content = base64.b64decode(audio_b64)
+        f = open(self.TEST_FILENAME, "wb")
+        f.write(file_content)
+        f.close()
